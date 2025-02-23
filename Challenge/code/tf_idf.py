@@ -20,9 +20,6 @@ from imblearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
 from collections import Counter
 
-# Uncomment for faster linear model alternative
-# from sklearn.linear_model import SGDClassifier  
-
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 
@@ -123,11 +120,6 @@ def main():
             random_state=42
         )
         
-        # Alternative SGD Classifier (much faster)
-        # model = Pipeline([
-        #     ('tfidf', tfidf),
-        #     ('sgd', SGDClassifier(class_weight='balanced', max_iter=1000, n_jobs=-1))
-        # ])
         
         # SMOTE configuration
         class_counts = Counter(y_train)
