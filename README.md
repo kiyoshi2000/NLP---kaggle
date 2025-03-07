@@ -5,16 +5,17 @@ This project fine-tunes the multilingual BERT (`bert-base-multilingual-cased`) m
 
 ## Features
 - Fine-tunes BERT for sequence classification
-- Handles imbalanced datasets and missing labels (`NaN` treated as a category, because they are not actually `NaN`, they are a language)
+- Handles imbalanced datasets and missing labels (`NaN` treated as a category, since they actually represent a language)
 - Supports training continuation from checkpoints
 - Evaluates model performance using accuracy, precision, recall, and F1-score
 - Applies the trained model to make predictions on new text samples
 
 ## Repository Structure
 ```
-├── fine_tunning.py    # Script for initial model training
-├── continue.py        # Script for continuing training from a checkpoint
-├── apply.py           # Script for making predictions with the trained model
+├── preprocessing.py    # Script for data preprocessing
+├── fine_tuning.py      # Script for initial model training
+├── continue.py         # Script for resuming training
+├── apply.py            # Script for making predictions with the trained model
 ├── train_submission.csv  # Training dataset (not included in repo)
 ├── test_without_labels.csv  # Test dataset (not included in repo)
 ├── README.md          # Project documentation
@@ -35,11 +36,22 @@ ID,Text,Label
 ...
 ```
 
+### 3. Data Preprocessing
+Before training, run the `preprocessing.py` script to clean and prepare the data:
+```bash
+python preprocessing.py
+```
+This script:
+- Removes unwanted special characters
+- Standardizes text formatting
+- Correctly handles missing labels (`NaN`)
+- Splits data into training and validation sets
+
 ## Training the Model
 ### Initial Fine-Tuning
 Run the following command to fine-tune BERT from scratch:
 ```bash
-python fine_tunning.py
+python fine_tuning.py
 ```
 This script:
 - Loads the dataset and tokenizes the text
@@ -47,14 +59,14 @@ This script:
 - Fine-tunes BERT for sequence classification
 - Saves the trained model to `./language_classifier`
 
-### Continue Training from a Checkpoint
-If training was interrupted or needs additional epochs, run:
+### Continue Training
+If training was interrupted or needs additional epochs:
 ```bash
 python continue.py
 ```
-This script:
+This script is necessary because we are using Metz DCE for training, which may disconnect during the process. It:
 - Loads the last saved checkpoint
-- Resumes training for additional epochs
+- Resumes training from where it left off
 
 ## Making Predictions
 To classify text from `test_without_labels.csv`, run:
@@ -70,7 +82,7 @@ This script:
 ## Model Evaluation
 During training, performance metrics (accuracy, precision, recall, F1-score) are logged. The model automatically saves the best checkpoint based on validation accuracy.
 
-## Saving & Loading Model
+## Saving & Loading the Model
 The fine-tuned model and tokenizer are saved in `./language_classifier`. To use it later:
 ```python
 from transformers import BertTokenizer, BertForSequenceClassification
@@ -81,9 +93,10 @@ model = BertForSequenceClassification.from_pretrained("./language_classifier")
 model.eval()
 ```
 
-## Acknowledgments
+## References
 - [Hugging Face Transformers](https://huggingface.co/transformers/)
 - [PyTorch](https://pytorch.org/)
 
 ## License
 This project is open-source and available under the MIT License.
+
