@@ -5,7 +5,7 @@ This project fine-tunes the multilingual BERT (`bert-base-multilingual-cased`) m
 
 ## Features
 - Fine-tunes BERT for sequence classification
-- Handles imbalanced datasets and missing labels (`NaN` treated as a category)
+- Handles imbalanced datasets and missing labels (`NaN` treated as a category, because they are not actually `NaN`, they are a language)
 - Supports training continuation from checkpoints
 - Evaluates model performance using accuracy, precision, recall, and F1-score
 - Applies the trained model to make predictions on new text samples
