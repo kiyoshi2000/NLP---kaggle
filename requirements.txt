@@ -1,3 +1,7 @@
-nltk
-threadpoolctl
-swifter
+torch
+transformers
+pandas
+numpy
+scikit-learn
+tqdm
+safetensors
