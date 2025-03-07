@@ -1,3 +1,5 @@
+import re
+from bs4 import BeautifulSoup
 import pandas as pd
 import torch
 import numpy as np
@@ -10,7 +12,7 @@ from tqdm import tqdm
 import time
 
 # Constants for paths and model configuration
-DATA_PATH = "train_submission.csv"  # Adjust if necessary
+DATA_PATH = "train_submission_clean.csv"  # Adjust if necessary
 MODEL_NAME = "bert-base-multilingual-cased"
 OUTPUT_DIR = "./results"
 LOGGING_DIR = "./logs"
