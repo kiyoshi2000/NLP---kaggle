@@ -10,6 +10,8 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import os
 from tqdm import tqdm
 import time
+import torch.nn as nn
+import torch.nn.functional as F
 
 # Constants for paths and model configuration
 DATA_PATH = "train_submission_clean.csv"  # Adjust if necessary
@@ -104,6 +106,35 @@ def compute_metrics(eval_pred):
     precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions, average="weighted", zero_division=0)
     acc = accuracy_score(labels, predictions)
     return {"accuracy": acc, "f1": f1, "precision": precision, "recall": recall}
+
+# Define Focal Loss
+class FocalLoss(nn.Module):
+    def __init__(self, gamma=2.0, weight=None, reduction='mean'):
+        super(FocalLoss, self).__init__()
+        self.gamma = gamma
+        self.weight = weight
+        self.reduction = reduction
+
+    def forward(self, inputs, targets):
+        logpt = F.log_softmax(inputs, dim=1)
+        pt = torch.exp(logpt)
+        logpt = logpt.gather(1, targets.unsqueeze(1))
+        pt = pt.gather(1, targets.unsqueeze(1))
+        loss = - (1 - pt) ** self.gamma * logpt
+        
+        if self.weight is not None:
+            at = self.weight.gather(0, targets)
+            loss = loss * at.unsqueeze(1)
+        
+        if self.reduction == 'mean':
+            return loss.mean()
+        elif self.reduction == 'sum':
+            return loss.sum()
+        else:
+            return loss
+
+# Use Focal Loss
+loss_function = FocalLoss()
 
 # Set training arguments
 print("Setting training arguments...")
